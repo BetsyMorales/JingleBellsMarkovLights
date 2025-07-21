@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jingle Bells Sequential Light Show</title>
+  <style>
+    body {
+      background: #add8e6; /* Light blue background */
+      color: #111;         /* Dark text for contrast */
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2em;
+    }
+
+    #lights-container {
+      position: relative;
+      margin-top: 2em;
+    }
+
+    #lights {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      z-index: 2;
+      position: relative;
+    }
+
+    .light {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #333;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      color: white;
+      transition: background 0.5s, box-shadow 0.5s;
+    }
+
+    .light.active {
+      background: yellow;
+      box-shadow: 0 0 20px 5px yellow;
+      color: black;
+    }
+
+    .arrow {
+      font-size: 32px;
+      color: #111;
+      user-select: none;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #222;
+      color: white;
+      border: 1px solid white;
+      cursor: pointer;
+    }
+
+    /* SVG curve arrow styling */
+    #curve-arrow {
+      position: absolute;
+      top: 70px;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    svg path {
+      stroke: #111;
+      stroke-width: 2;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+  </style>
+</head>
+<body>
+  <h1>🎵 Jingle Bells Sequential Light Show 🎄</h1>
+  <audio id="jingle-audio" src="Jingle-bells-chorus.mp3" loop></audio>
+  <button onclick="toggleAudio()">Play/Pause Music</button>
+
+  <div id="lights-container">
+    <div id="lights">
+      <div class="light" id="light-C">C1</div>
+      <div class="arrow">→</div>
+      <div class="light" id="light-G">C2</div>
+      <div class="arrow">→</div>
+      <div class="light" id="light-F">C3</div>
+      <div class="arrow">→</div>
+      <div class="light" id="light-A">C4</div>
+      <div class="arrow">→</div>
+      <div class="light" id="light-D">C5</div>
+    </div>
+
+    <!-- Curved SVG arrow from C5 to C1 -->
+    <svg id="curve-arrow" viewBox="0 0 600 100" preserveAspectRatio="none">
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7"
+                refX="0" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#111"/>
+        </marker>
+      </defs>
+      <path d="M 540 10 Q 300 80, 60 10" />
+    </svg>
+  </div>
+
+  <script>
+    // Ordered sequence of notes
+    const orderedNotes = ["C", "G", "F", "A", "D"];
+    let currentIndex = 0;
+    let orderedInterval = null;
+
+    function activateLight(note) {
+      const lights = document.querySelectorAll('.light');
+      lights.forEach(light => {
+        light.classList.remove('active');
+      });
+      const light = document.getElementById('light-' + note);
+      if (light) light.classList.add('active');
+    }
+
+    function runOrderedLights() {
+      const note = orderedNotes[currentIndex];
+      activateLight(note);
+      currentIndex = (currentIndex + 1) % orderedNotes.length;
+    }
+
+    // Audio Control
+    const audio = document.getElementById('jingle-audio');
+    function toggleAudio() {
+      if (audio.paused) {
+        audio.play();
+        if (!orderedInterval) {
+          orderedInterval = setInterval(runOrderedLights, 2000);
+        }
+      } else {
+        audio.pause();
+        clearInterval(orderedInterval);
+        orderedInterval = null;
+      }
+    }
+  </script>
+</body>
+</html>
