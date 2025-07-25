@@ -2,6 +2,153 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cluster Light Show</title>
+  <style>
+    body {
+      background: #add8e6;
+      color: #111;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2em;
+    }
+
+    #lights-container {
+      position: relative;
+      width: 600px;
+      height: 600px;
+      margin: 0 auto;
+    }
+
+    .light {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #333;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      color: white;
+      transition: background 0.5s, box-shadow 0.5s;
+    }
+
+    .light.active {
+      background: yellow;
+      box-shadow: 0 0 20px 5px yellow;
+      color: black;
+    }
+
+    svg path {
+      stroke: #111;
+      stroke-width: 2;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #222;
+      color: white;
+      border: 1px solid white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌟🎵 Jingle Bells Sequential Light Show 🌟</h1>
+  <audio id="jingle-audio" src="Short Jingle Bells.mp3" loop></audio>
+  <button onclick="toggleAudio()">Play/Pause Music</button>
+
+  <div id="lights-container">
+    <!-- Cluster Lights -->
+    <div class="light" id="light-C" style="top: 50px; left: 270px;">C1</div>
+    <div class="light" id="light-G" style="top: 150px; left: 400px;">C2</div>
+    <div class="light" id="light-F" style="top: 300px; left: 340px;">C3</div>
+    <div class="light" id="light-A" style="top: 300px; left: 200px;">C4</div>
+    <div class="light" id="light-D" style="top: 100px; left: 500px;">C5</div>
+
+    <!-- Shortened & Neat Arrows -->
+    <svg width="600" height="600" style="position:absolute; top:0; left:0; pointer-events: none;">
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7"
+                refX="0" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#111"/>
+        </marker>
+      </defs>
+
+      <!-- Short and clean directional arrows -->
+      <path d="M300,80 L385,160" />            <!-- C1 → C2 -->
+      <path d="M420,190 L370,310" />           <!-- C2 → C3 -->
+      <path d="M370,310 L310,100" />           <!-- C3 → C1 -->
+      <path d="M300,80 L240,300" />            <!-- C1 → C4 -->
+      <path d="M360,310 L500,140" />           <!-- C3 → C5 -->
+      <path d="M520,135 C490,90 400,60 315,95" /> <!-- C5 → C1 (curved and shorter) -->
+    </svg>
+  </div>
+
+  <script>
+    // Activation sequence
+    const sequence = [
+      ["C"], ["G"], ["F"], ["C"],
+      ["C", "A"],
+      ["C"], ["G"], ["F"], ["C"], ["F"], ["D"]
+    ];
+
+    let currentIndex = 0;
+    let interval = null;
+
+    function activateLights(ids) {
+      document.querySelectorAll('.light').forEach(light =>
+        light.classList.remove('active')
+      );
+      ids.forEach(id => {
+        const light = document.getElementById('light-' + id);
+        if (light) light.classList.add('active');
+      });
+    }
+
+    function runSequence() {
+      activateLights(sequence[currentIndex]);
+      currentIndex = (currentIndex + 1) % sequence.length;
+    }
+
+    const audio = document.getElementById('jingle-audio');
+    function toggleAudio() {
+      if (audio.paused) {
+        audio.play();
+        if (!interval) interval = setInterval(runSequence, 1500);
+      } else {
+        audio.pause();
+        clearInterval(interval);
+        interval = null;
+        document.querySelectorAll('.light').forEach(light =>
+          light.classList.remove('active')
+        );
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jingle Bells Sequential Light Show</title>
   <style>
@@ -101,7 +248,7 @@
     </div>
 
     <!-- Curved SVG arrow from C5 to C1 -->
-    <svg id="curve-arrow" viewBox="0 0 600 100" preserveAspectRatio="none">
+   <!--> <svg id="curve-arrow" viewBox="0 0 600 100" preserveAspectRatio="none">
       <defs>
         <marker id="arrowhead" markerWidth="10" markerHeight="7"
                 refX="0" refY="3.5" orient="auto">
